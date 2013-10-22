@@ -1,0 +1,76 @@
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+
+  dependencies {
+    classpath 'org.gradle.api.plugins:gradle-nexus-plugin:0.2'
+  }
+}
+
+apply plugin: 'groovy'
+apply plugin: 'maven'
+apply plugin: 'nexus'
+
+group = 'org.notlocalhost.gradle'
+version = '0.1.0-SNAPSHOT'
+
+dependencies {
+  repositories {
+    mavenCentral()
+  }
+
+  compile gradleApi()
+  compile localGroovy()
+  compile 'com.android.tools.build:gradle:0.6.+'
+
+  testCompile 'junit:junit:4.10'
+  testCompile 'org.easytesting:fest-assert-core:2.0M10'
+}
+
+install {
+  repositories.mavenInstaller {
+    pom.artifactId = 'gradle-calabash-android-plugin'
+  }
+}
+uploadArchives {
+  repositories.mavenDeployer {
+    pom.artifactId = 'gradle-calabash-android-plugin'
+  }
+}
+
+modifyPom {
+  project {
+    name 'Gradle Calabash Test Plugin'
+    description "A Gradle plugin which enables Calabash Testing"
+    url 'https://github.com/pedlar/gradle-calabash-android-plugin'
+    inceptionYear '2013'
+
+    scm {
+      url 'https://github.com/pedlar/gradle-calabash-android-plugin'
+      connection 'scm:git:git://github.com/pedlar/gradle-calabash-android-plugin.git'
+      developerConnection 'scm:git:ssh://git@github.com/pedlar/gradle-calabash-android-plugin.git'
+    }
+
+    licenses {
+      license {
+        name 'The Apache Software License, Version 2.0'
+        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+        distribution 'repo'
+      }
+    }
+
+    developers {
+      developer {
+        id 'pedlar'
+        name 'Pedlar'
+        email 'pedlar88@gmail.com'
+      }
+    }
+
+    organization {
+      name 'NotLocalHost'
+      url 'http://notlocalhost.org'
+    }
+  }
+}
