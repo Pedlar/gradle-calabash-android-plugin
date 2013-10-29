@@ -11,9 +11,9 @@ Add the plugin to your `buildscript`'s `dependencies` section:
 classpath 'org.notlocalhost.gradle:gradle-calabash-android-plugin:0.1.+'
 ```
 
-Apply the `calabash-android` plugin:
+Apply the `calabash-test` plugin:
 ```groovy
-apply plugin: 'calabash-android'
+apply plugin: 'calabash-test'
 ```
 
 The calabash 'features' folder should be at the top level of your project. 
