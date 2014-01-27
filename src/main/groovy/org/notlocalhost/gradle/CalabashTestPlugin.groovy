@@ -69,6 +69,7 @@ class CalabashTestPlugin implements Plugin<Project> {
                 // you start commands in Windows by kicking off a cmd shell
                 testRunTask.commandLine "cmd", "/c", "calabash-android", "run", "${apkFile}", "--format", "html", "--out", outFile.canonicalPath
             }  else { // assume Linux 
+                testRunTask.environment("SCREENSHOT_PATH", "${outFileDir}/")
                 testRunTask.commandLine "calabash-android", "run", "${apkFile}", "--format", "html", "--out", outFile.canonicalPath
             }
 
