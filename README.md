@@ -16,7 +16,17 @@ Apply the `calabash-test` plugin:
 apply plugin: 'calabash-test'
 ```
 
-The calabash 'features' folder should be at the top level of your project. 
+To configure the features path and profiles from within the build.gradle file add a calabashTest section.
+To set the path of the features add a featuresPath item to the newly created calabashTest section, these are not essential.
+```groovy
+calabashTest {
+    featuresPath = "functional-tests/features/"
+    profile = "android"
+}
+```
+
+If you do not wish to override the above items, the calabash 'features' folder should be at the top level of your project. 
+
 And then just run `./gradlew clean calabash<Variation>` you can look at the 
 Gradle tasks to know all possible Variations that can be run. ( `./gradlew tasks` )
 
@@ -24,7 +34,6 @@ Output
 ------
 
 The HTML report output is put in `build/reports/calabash/${variationName}/report.html`
-
 
 License
 -------
