@@ -3,12 +3,17 @@ gradle-calabash-android-plugin
 
 Gradle Plugin for Calabash
 
+Version Information
+-----
+Version 0.1.1 : Support for Android Gradle Plugins before build was moved to build/outputs
+Version 1.0+ : Support for newer Android Gradle Plugins that use the build/outputs directory.
+
 Usage
 -----
 
 Add the plugin to your `buildscript`'s `dependencies` section:
 ```groovy
-classpath 'org.notlocalhost.gradle:gradle-calabash-android-plugin:0.1.+'
+classpath 'org.notlocalhost.gradle:gradle-calabash-android-plugin:1.+'
 ```
 
 Apply the `calabash-test` plugin:
