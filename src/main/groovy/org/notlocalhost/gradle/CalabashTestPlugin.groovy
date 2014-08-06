@@ -26,7 +26,7 @@ class CalabashTestPlugin implements Plugin<Project> {
         def variants = hasAppPlugin ? project.android.applicationVariants :
                 project.android.libraryVariants
 
-        def apkFilePath = "$project.buildDir/apk"
+        def apkFilePath = "$project.buildDir/outputs/apk"
 
         variants.all { variant ->
             def buildTypeName = variant.buildType.name.capitalize()
