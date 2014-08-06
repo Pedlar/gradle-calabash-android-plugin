@@ -12,6 +12,8 @@ class CalabashTestPlugin implements Plugin<Project> {
     private static final String TEST_TASK_NAME = 'calabash'
 
     void apply(Project project) {
+        project.extensions.create("calabashTest", CalabashTestPluginExtension)
+
         def hasAppPlugin = project.plugins.hasPlugin AppPlugin
         def hasLibraryPlugin = project.plugins.hasPlugin LibraryPlugin
 
@@ -65,13 +67,14 @@ class CalabashTestPlugin implements Plugin<Project> {
             def apkFile = "$apkFilePath/$apkName"
             testRunTask.workingDir "${project.rootDir}/"
             def os = System.getProperty("os.name").toLowerCase()
-            if (os.contains("windows")) {
-                // you start commands in Windows by kicking off a cmd shell
-                testRunTask.commandLine "cmd", "/c", "calabash-android", "run", "${apkFile}", "--format", "html", "--out", outFile.canonicalPath, "-v"
-            }  else { // assume Linux 
+
+            Iterable commandArguments = constructCommandLineArguments(project, apkFile, outFile)
+
+            if (!os.contains("windows")) { // assume Linux
                 testRunTask.environment("SCREENSHOT_PATH", "${outFileDir}/")
-                testRunTask.commandLine "calabash-android", "run", "${apkFile}", "--format", "html", "--out", outFile.canonicalPath, "-v"
             }
+
+            testRunTask.commandLine commandArguments
 
             testRunTask.doFirst {
                 if(!outFileDir.exists()) {
@@ -86,5 +89,39 @@ class CalabashTestPlugin implements Plugin<Project> {
                 println "\r\nCalabash HTML Report: file://$outFile.canonicalPath"
             }
         }
+    }
+
+    Iterable constructCommandLineArguments(Project project, String apkFile, File outFile) {
+        def os = System.getProperty("os.name").toLowerCase()
+
+        java.util.ArrayList<String> commandArguments = new ArrayList<String>()
+
+        if (os.contains("windows")) {
+            // you start commands in Windows by kicking off a cmd shell
+            commandArguments.add("cmd")
+            commandArguments.add("/c")
+        }
+
+        commandArguments.add("calabash-android")
+        commandArguments.add("run")
+        commandArguments.add(apkFile)
+
+        String featuresPath = project.calabashTest.featuresPath
+        if (featuresPath != null) {
+            commandArguments.add(featuresPath)
+        }
+
+        if(project.calabashTest.profile != null) {
+            commandArguments.add("--profile")
+            commandArguments.add(project.calabashTest.profile)
+        }
+
+        commandArguments.add("--format")
+        commandArguments.add("html")
+        commandArguments.add("--out")
+        commandArguments.add(outFile.canonicalPath)
+        commandArguments.add("-v")
+
+        return commandArguments;
     }
 }

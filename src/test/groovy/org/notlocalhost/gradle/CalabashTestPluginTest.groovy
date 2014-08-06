@@ -26,4 +26,36 @@ class CalabashTestPluginTest {
       Assertions.assertThat(e).hasMessage("The 'android' or 'android-library' plugin is required.");
     }
   }
+
+  @Test public void pluginGetsFeaturesPathFromGradleBuildFileWhenAvailable() {
+      CalabashTestPlugin plugin = new CalabashTestPlugin();
+
+      String apkFile = "TestApkFile";
+      File outFile = new File("/File/Path");
+      Project project = ProjectBuilder.builder().build();
+
+      project.extensions.create("calabashTest", CalabashTestPluginExtension)
+
+      project.calabashTest.featuresPath = "features-path";
+
+      Iterable commandArguments = plugin.constructCommandLineArguments(project, apkFile, outFile);
+
+      Assertions.assertThat(commandArguments.contains("features-path")).isTrue();
+  }
+
+  @Test public void pluginGetsProfileFromGradleBuildFileWhenAvailable() {
+      CalabashTestPlugin plugin = new CalabashTestPlugin();
+
+      String apkFile = "TestApkFile";
+      File outFile = new File("/File/Path");
+      Project project = ProjectBuilder.builder().build();
+
+      project.extensions.create("calabashTest", CalabashTestPluginExtension)
+
+      project.calabashTest.profile = "expectedProfile";
+
+      Iterable commandArguments = plugin.constructCommandLineArguments(project, apkFile, outFile);
+
+      Assertions.assertThat(commandArguments.contains("expectedProfile")).isTrue();
+  }
 }
