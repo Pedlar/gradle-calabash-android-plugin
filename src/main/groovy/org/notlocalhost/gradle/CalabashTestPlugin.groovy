@@ -39,8 +39,8 @@ class CalabashTestPlugin implements Plugin<Project> {
                     projectFlavorNames = [""]
                 }
             }
-            def projectFlavorName = projectFlavorNames.join()
-            def variationName = "$projectFlavorName$buildTypeName"
+            def projectFlavorName = projectFlavorNames.join('-')
+            def variationName = "${projectFlavorNames.join()}$buildTypeName"
 
             def apkName = ""
             if(projectFlavorName != "") {
