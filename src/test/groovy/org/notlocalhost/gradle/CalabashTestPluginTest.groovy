@@ -23,7 +23,7 @@ class CalabashTestPluginTest {
     try {
       project.apply plugin: 'calabash-test'
     } catch (IllegalStateException e) {
-      Assertions.assertThat(e).hasMessage("The 'android' or 'android-library' plugin is required.");
+      Assertions.assertThat(e).hasMessage("The 'com.android.application' or 'com.android.library' plugin is required.");
     }
   }
 
