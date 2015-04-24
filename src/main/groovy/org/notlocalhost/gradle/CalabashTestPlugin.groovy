@@ -54,9 +54,6 @@ class CalabashTestPlugin implements Plugin<Project> {
             project.logger.debug "${project.getPath()}"
             project.logger.debug "==========================="
 
-            def outFile = new File(project.file("build/reports/calabash/${variationName}"), "report.html")
-            def outFileDir = outFile.parentFile
-
 
             def taskRunName = "$TEST_TASK_NAME$variationName"
             def testRunTask = project.tasks.create(taskRunName, Exec)
@@ -67,8 +64,10 @@ class CalabashTestPlugin implements Plugin<Project> {
             def apkFile = "$apkFilePath/$apkName"
             testRunTask.workingDir "${project.rootDir}/"
             def os = System.getProperty("os.name").toLowerCase()
+            
+            def outFileDir = project.file("build/reports/calabash/${variationName}")
 
-            Iterable commandArguments = constructCommandLineArguments(project, apkFile, outFile)
+            Iterable commandArguments = constructCommandLineArguments(project, apkFile, outFileDir)
 
             if (!os.contains("windows")) { // assume Linux
                 testRunTask.environment("SCREENSHOT_PATH", "${outFileDir}/")
@@ -91,7 +90,7 @@ class CalabashTestPlugin implements Plugin<Project> {
         }
     }
 
-    Iterable constructCommandLineArguments(Project project, String apkFile, File outFile) {
+    Iterable constructCommandLineArguments(Project project, String apkFile, File outFileDir) {
         def os = System.getProperty("os.name").toLowerCase()
 
         java.util.ArrayList<String> commandArguments = new ArrayList<String>()
@@ -116,10 +115,18 @@ class CalabashTestPlugin implements Plugin<Project> {
             commandArguments.add(project.calabashTest.profile)
         }
 
-        commandArguments.add("--format")
-        commandArguments.add("html")
-        commandArguments.add("--out")
-        commandArguments.add(outFile.canonicalPath)
+        String[] outFileFormats = project.calabashTest.formats
+        if (outFileFormats == null) {
+            outFileFormats = ["html"]
+        }
+
+        for (String outFileFormat : outFileFormats) {
+            def outFile = new File(outFileDir, "report."+outFileFormat)
+            commandArguments.add("--format")
+            commandArguments.add(outFileFormat)
+            commandArguments.add("--out")
+            commandArguments.add(outFile.canonicalPath)
+        }
         commandArguments.add("-v")
 
         return commandArguments;
