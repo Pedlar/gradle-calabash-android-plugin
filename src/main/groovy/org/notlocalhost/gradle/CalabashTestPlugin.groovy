@@ -19,10 +19,10 @@ class CalabashTestPlugin implements Plugin<Project> {
 
         // Ensure the Android plugin has been added in app or library form, but not both.
         if (!hasAppPlugin && !hasLibraryPlugin) {
-            throw new IllegalStateException("The 'android' or 'android-library' plugin is required.")
+            throw new IllegalStateException("The 'com.android.application' or 'com.android.library' plugin is required.")
         } else if (hasAppPlugin && hasLibraryPlugin) {
             throw new IllegalStateException(
-                    "Having both 'android' and 'android-library' plugin is not supported.")
+                    "Having both 'com.android.application' and 'com.android.library' plugin is not supported.")
         }
 
         def variants = hasAppPlugin ? project.android.applicationVariants :
