@@ -40,9 +40,9 @@ class CalabashTestPlugin implements Plugin<Project> {
                 }
             }
             def projectFlavorName = projectFlavorNames.join('-')
-            def variationName = "${projectFlavorNames.join()}$buildTypeName"
+            def variationName = "${projectFlavorNames.join("")}$buildTypeName"
 
-            def apkName = ""
+            def apkName
             if(projectFlavorName != "") {
                 apkName = "${project.name}-${projectFlavorName.toLowerCase()}-${buildTypeName.toLowerCase()}-unaligned.apk"
             } else {
@@ -85,15 +85,18 @@ class CalabashTestPlugin implements Plugin<Project> {
             }
             
             testRunTask.doLast {
-                println "\r\nCalabash HTML Report: file://$outFile.canonicalPath"
+                List<String> outFiles = project.outFiles as List<String>;
+                for (String outFile : outFiles) {
+                    println "\r\nCalabash HTML Report: file://$outFile"
+                }
             }
         }
     }
 
-    Iterable constructCommandLineArguments(Project project, String apkFile, File outFileDir) {
+    static Iterable constructCommandLineArguments(Project project, String apkFile, File outFileDir) {
         def os = System.getProperty("os.name").toLowerCase()
 
-        java.util.ArrayList<String> commandArguments = new ArrayList<String>()
+        ArrayList<String> commandArguments = new ArrayList<String>()
 
         if (os.contains("windows")) {
             // you start commands in Windows by kicking off a cmd shell
@@ -120,13 +123,17 @@ class CalabashTestPlugin implements Plugin<Project> {
             outFileFormats = ["html"]
         }
 
+        List<String> outFiles = new LinkedList<>();
         for (String outFileFormat : outFileFormats) {
             def outFile = new File(outFileDir, "report."+outFileFormat)
             commandArguments.add("--format")
             commandArguments.add(outFileFormat)
             commandArguments.add("--out")
             commandArguments.add(outFile.canonicalPath)
+            outFiles.add(outFile.canonicalPath)
         }
+        project.ext.set("outFiles", outFiles)
+
         commandArguments.add("-v")
 
         return commandArguments;
