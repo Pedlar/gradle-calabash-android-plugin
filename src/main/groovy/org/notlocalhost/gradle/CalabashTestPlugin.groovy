@@ -69,9 +69,7 @@ class CalabashTestPlugin implements Plugin<Project> {
 
             Iterable commandArguments = constructCommandLineArguments(project, apkFile, outFileDir)
 
-            if (!os.contains("windows")) { // assume Linux
-                testRunTask.environment("SCREENSHOT_PATH", "${outFileDir}/")
-            }
+            testRunTask.environment("SCREENSHOT_PATH", "${outFileDir}/")
 
             testRunTask.commandLine commandArguments
 
