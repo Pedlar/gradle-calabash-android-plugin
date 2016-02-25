@@ -62,9 +62,13 @@ class CalabashTestPlugin implements Plugin<Project> {
             testRunTask.group = JavaBasePlugin.VERIFICATION_GROUP
 
             def apkFile = "$apkFilePath/$apkName"
-            testRunTask.workingDir "${project.rootDir}/"
+            if (project.calabashTest.workingDir != null) {
+                testRunTask.workingDir project.calabashTest.workingDir
+            } else {
+                testRunTask.workingDir "${project.rootDir}/"
+            }
             def os = System.getProperty("os.name").toLowerCase()
-            
+
             def outFileDir = project.file("build/reports/calabash/${variationName}")
 
             Iterable commandArguments = constructCommandLineArguments(project, apkFile, outFileDir)
@@ -83,9 +87,16 @@ class CalabashTestPlugin implements Plugin<Project> {
                     }
                 }
             }
-            
+
             testRunTask.doLast {
-                println "\r\nCalabash HTML Report: file://$outFile.canonicalPath"
+                String[] outFileFormats = project.calabashTest.formats
+                if (outFileFormats == null) {
+                    outFileFormats = ["html"]
+                }
+                if (outFileFormats.contains('html')) {
+                    def outFile = new File(outFileDir, "report.html")
+                    println "\r\nCalabash HTML Report: file://$outFile.canonicalPath"
+                }
             }
         }
     }
